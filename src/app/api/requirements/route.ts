@@ -41,9 +41,10 @@ export async function POST(req: Request) {
       },
     });
 
-    // Send email notification safely in background without blocking response
+    // Await email BEFORE returning response — critical for Vercel serverless
+    // (serverless functions terminate immediately after response, killing background tasks)
     try {
-      sendEnquiryEmail({
+      await sendEnquiryEmail({
         name: data.name,
         phone: data.phone,
         email: data.email,
@@ -55,9 +56,10 @@ export async function POST(req: Request) {
         moveInDate: data.moveInDate,
         additionalRequirements: data.additionalRequirements || "",
         createdAt: record.createdAt || new Date(),
-      }).catch((err) => console.error("Async email dispatch catch:", err));
+      });
     } catch (emailErr) {
-      console.error("Non-blocking email send error:", emailErr);
+      // Log error but don't fail the request — data is already saved
+      console.error("Email send error (non-fatal):", emailErr);
     }
 
     return NextResponse.json(
