@@ -11,11 +11,13 @@ export async function POST(req: Request) {
     const validationResult = rentalRequirementSchema.safeParse(body);
 
     if (!validationResult.success) {
+      const formattedErrors = validationResult.error.flatten().fieldErrors;
+      console.warn("Validation failed for request:", formattedErrors);
       return NextResponse.json(
         {
           success: false,
-          error: "Validation failed",
-          details: validationResult.error.flatten().fieldErrors,
+          error: "Validation failed. Please check all fields.",
+          details: formattedErrors,
         },
         { status: 400 }
       );
@@ -39,11 +41,24 @@ export async function POST(req: Request) {
       },
     });
 
-    // Send email notification to owner (background async so user response is fast)
-    sendEnquiryEmail({
-      ...data,
-      createdAt: record.createdAt,
-    }).catch((err) => console.error("Async email dispatch error:", err));
+    // Send email notification safely in background without blocking response
+    try {
+      sendEnquiryEmail({
+        name: data.name,
+        phone: data.phone,
+        email: data.email,
+        city: data.city,
+        preferredArea: data.preferredArea,
+        budget: data.budget,
+        flatType: data.flatType,
+        tenantType: data.tenantType,
+        moveInDate: data.moveInDate,
+        additionalRequirements: data.additionalRequirements || "",
+        createdAt: record.createdAt || new Date(),
+      }).catch((err) => console.error("Async email dispatch catch:", err));
+    } catch (emailErr) {
+      console.error("Non-blocking email send error:", emailErr);
+    }
 
     return NextResponse.json(
       {
@@ -53,12 +68,12 @@ export async function POST(req: Request) {
       },
       { status: 201 }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error creating rental request:", error);
     return NextResponse.json(
       {
         success: false,
-        error: "Internal server error. Please try again later.",
+        error: error?.message || "Internal server error. Please try again later.",
       },
       { status: 500 }
     );

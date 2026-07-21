@@ -16,16 +16,22 @@ interface EmailPayload {
 }
 
 export async function sendEnquiryEmail(data: EmailPayload) {
-  const ownerEmail = process.env.OWNER_EMAIL || "supportgharsathi@gmail.com";
-  const formattedDate = new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "full",
-    timeStyle: "medium",
-    timeZone: "Asia/Kolkata",
-  }).format(data.createdAt);
+  try {
+    const ownerEmail = process.env.OWNER_EMAIL || "supportgharsathi@gmail.com";
+    let formattedDate = "";
+    try {
+      formattedDate = new Intl.DateTimeFormat("en-IN", {
+        dateStyle: "full",
+        timeStyle: "medium",
+        timeZone: "Asia/Kolkata",
+      }).format(data.createdAt || new Date());
+    } catch {
+      formattedDate = new Date().toLocaleString();
+    }
 
-  const subject = "🏠 New Rental Enquiry | GharSathi";
+    const subject = "🏠 New Rental Enquiry | GharSathi";
 
-  const htmlContent = `
+    const htmlContent = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -168,30 +174,37 @@ Submitted At: ${formattedDate}
   if (process.env.RESEND_API_KEY && process.env.RESEND_API_KEY.startsWith("re_")) {
     try {
       const resend = new Resend(process.env.RESEND_API_KEY);
-      await resend.emails.send({
+      const resendResult = await resend.emails.send({
         from: "GharSathi <onboarding@resend.dev>",
         to: [ownerEmail],
         subject,
         html: htmlContent,
         text: textContent,
       });
-      console.log(`[Resend] Email successfully dispatched to ${ownerEmail}`);
-      return;
+
+      if (!resendResult.error) {
+        console.log(`[Resend] Email successfully dispatched to ${ownerEmail}`);
+        return;
+      } else {
+        console.warn("[Resend Warning]:", resendResult.error);
+      }
     } catch (resendError) {
       console.warn("[Resend Error] Falling back to Nodemailer SMTP:", resendError);
     }
   }
 
   // 2. Try Nodemailer SMTP if configured
-  if (process.env.SMTP_HOST && process.env.SMTP_USER) {
+  if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
     try {
+      // Strip spaces from Gmail App Password if present
+      const cleanPass = process.env.SMTP_PASS.replace(/\s+/g, "");
       const transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
         port: parseInt(process.env.SMTP_PORT || "587"),
         secure: process.env.SMTP_PORT === "465",
         auth: {
           user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS,
+          pass: cleanPass,
         },
       });
 
@@ -207,5 +220,8 @@ Submitted At: ${formattedDate}
     } catch (smtpError) {
       console.warn("[Nodemailer Error] Could not send via SMTP:", smtpError);
     }
+  }
+  } catch (globalEmailError) {
+    console.error("Global sendEnquiryEmail error:", globalEmailError);
   }
 }
