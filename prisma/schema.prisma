@@ -1,0 +1,23 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model RentalRequests {
+  id                     String   @id @default(cuid())
+  name                   String
+  phone                  String
+  email                  String
+  city                   String
+  preferredArea          String
+  budget                 String
+  flatType               String
+  tenantType             String
+  moveInDate             String
+  additionalRequirements String?
+  createdAt              DateTime @default(now())
+}

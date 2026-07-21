@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- House Base (Teal) -->
+  <path d="M22 46V76C22 80.4183 25.5817 84 30 84H70C74.4183 84 78 80.4183 78 76V46L50 24L22 46Z" fill="#007A87"/>
+  <!-- Roof (Orange) -->
+  <path d="M14 48L50 20L86 48" stroke="#F58220" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Door Arch -->
+  <path d="M40 84V64C40 58.4772 44.4772 54 50 54C55.5228 54 60 58.4772 60 64V84H40Z" fill="#FFFFFF"/>
+  <!-- Heart (Orange) -->
+  <path d="M50 42C48 37 42 36 38 40C34 44 38 50 50 56C62 50 66 44 62 40C58 36 52 37 50 42Z" fill="#F58220"/>
+</svg>
