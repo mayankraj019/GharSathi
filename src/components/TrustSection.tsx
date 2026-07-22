@@ -8,35 +8,46 @@ export function TrustSection() {
       icon: ShieldCheck,
       title: "Verified Property Brokers",
       description: "We work strictly with background-verified, local market experts you can trust.",
+      accent: "from-blue-500/10 to-indigo-500/10",
+      iconColor: "text-blue-600",
     },
     {
       icon: Zap,
       title: "Fast Response",
       description: "Receive curated rental matches directly from brokers within 30 minutes.",
+      accent: "from-amber-500/10 to-orange-500/10",
+      iconColor: "text-amber-600",
     },
     {
       icon: UserCheck,
       title: "Personalized Assistance",
       description: "Options tailored specifically to your budget, flat type, and preferred locality.",
+      accent: "from-emerald-500/10 to-teal-500/10",
+      iconColor: "text-emerald-600",
     },
     {
       icon: CheckCircle2,
       title: "Trusted Process",
       description: "Zero spam. Zero public listings. Your contact details remain safe and private.",
+      accent: "from-indigo-500/10 to-purple-500/10",
+      iconColor: "text-indigo-600",
     },
   ];
 
   return (
-    <section className="py-16 md:py-20 bg-slate-50 border-y border-gray-200/80">
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 md:py-28 bg-slate-50/80 border-y border-slate-200/70 transition-colors duration-300 relative overflow-hidden">
+      {/* Background Soft Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[300px] bg-blue-500/[0.025] rounded-full blur-3xl pointer-events-none" />
+
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <h2 className="text-xs font-bold tracking-widest text-blue-600 uppercase mb-2">
+        <div className="text-center max-w-2xl mx-auto mb-16">
+          <span className="text-xs font-bold tracking-widest text-blue-600 uppercase mb-2 block">
             Why Renters Trust Us
-          </h2>
-          <p className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
             Built on Trust, Transparency &amp; Speed
-          </p>
+          </h2>
         </div>
 
         {/* 4 Trust Cards Grid */}
@@ -46,15 +57,18 @@ export function TrustSection() {
             return (
               <div
                 key={index}
-                className="bg-white border border-gray-200/90 rounded-xl p-6 transition-all duration-200 hover:border-gray-300 hover:shadow-soft flex flex-col items-start"
+                className="group relative bg-white border border-slate-200/80 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-card hover:border-blue-500/40 flex flex-col items-start overflow-hidden"
               >
-                <div className="w-10 h-10 rounded-lg bg-slate-100 text-gray-900 flex items-center justify-center mb-5">
-                  <Icon className="w-5 h-5 stroke-[2]" />
+                {/* Top Subtle Gradient Accents */}
+                <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${item.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+
+                <div className={`w-12 h-12 rounded-xl bg-slate-50 border border-slate-200/60 ${item.iconColor} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-xs`}>
+                  <Icon className="w-6 h-6 stroke-[2]" />
                 </div>
-                <h3 className="text-base font-bold text-gray-900 mb-2">
+                <h3 className="text-base font-bold text-slate-900 mb-2 tracking-tight group-hover:text-blue-600 transition-colors">
                   {item.title}
                 </h3>
-                <p className="text-sm text-gray-600 leading-relaxed font-normal">
+                <p className="text-sm text-slate-600 leading-relaxed font-normal">
                   {item.description}
                 </p>
               </div>

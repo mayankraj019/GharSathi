@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, Users, Home } from "lucide-react";
+import { FileText, Users, Home, ArrowRight } from "lucide-react";
 
 export function HowItWorks() {
   const steps = [
@@ -25,46 +25,59 @@ export function HowItWorks() {
   ];
 
   return (
-    <section id="how-it-works" className="py-20 md:py-28 bg-white dark:bg-slate-950 transition-colors duration-300">
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="how-it-works" className="py-24 md:py-32 bg-white transition-colors duration-300 relative overflow-hidden">
+      {/* Background Soft Ambient Glow */}
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/[0.03] rounded-full blur-3xl pointer-events-none" />
+
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <h2 className="text-xs font-bold tracking-widest text-blue-600 dark:text-blue-400 uppercase mb-2">
+        <div className="text-center max-w-2xl mx-auto mb-20">
+          <span className="text-xs font-bold tracking-widest text-blue-600 uppercase mb-2 block">
             Simple 3-Step Process
-          </h2>
-          <p className="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-4">
+          </span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight mb-4">
             How GharSathi Works
-          </p>
-          <p className="text-base sm:text-lg text-gray-600 dark:text-slate-400 font-normal">
+          </h2>
+          <p className="text-base sm:text-lg text-slate-600 font-normal">
             No endless scrolling, no fake listings, and no calling dozens of unverified contacts.
           </p>
         </div>
 
-        {/* 3 Step Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* 3 Step Cards Grid with Connecting Flow Lines */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+          {/* Connecting Line Accent on Desktop */}
+          <div className="hidden md:block absolute top-1/2 left-[15%] right-[15%] h-0.5 bg-gradient-to-r from-blue-500/20 via-indigo-500/40 to-blue-500/20 -translate-y-8 z-0" />
+
           {steps.map((item, index) => {
             const Icon = item.icon;
             return (
               <div
                 key={index}
-                className="relative bg-white dark:bg-slate-900 border border-gray-200/90 dark:border-slate-800 rounded-2xl p-8 transition-all duration-200 hover:border-blue-600/40 dark:hover:border-blue-500/40 hover:shadow-card group"
+                className="group relative z-10 bg-white border border-slate-200/90 rounded-2xl p-8 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-card hover:border-blue-500/40 flex flex-col justify-between"
               >
-                {/* Step Number Tag */}
-                <div className="flex items-center justify-between mb-6">
-                  <div className="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-white flex items-center justify-center group-hover:bg-blue-50 dark:group-hover:bg-blue-950 group-hover:border-blue-200 dark:group-hover:border-blue-800 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                    <Icon className="w-6 h-6 stroke-[1.8]" />
+                <div>
+                  {/* Step Number Tag & Icon */}
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-900 flex items-center justify-center group-hover:bg-blue-600 group-hover:border-blue-600 group-hover:text-white transition-all duration-300 shadow-xs">
+                      <Icon className="w-7 h-7 stroke-[1.8]" />
+                    </div>
+                    <span className="text-4xl font-black text-slate-200 group-hover:text-blue-500/30 transition-colors font-mono tracking-tighter">
+                      {item.step}
+                    </span>
                   </div>
-                  <span className="text-3xl font-black text-slate-200 dark:text-slate-800 group-hover:text-blue-200 dark:group-hover:text-blue-900 transition-colors font-mono">
-                    {item.step}
-                  </span>
+
+                  <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight group-hover:text-blue-600 transition-colors">
+                    {item.title}
+                  </h3>
+                  <p className="text-sm text-slate-600 leading-relaxed font-normal">
+                    {item.description}
+                  </p>
                 </div>
 
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
-                  {item.title}
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-slate-400 leading-relaxed font-normal">
-                  {item.description}
-                </p>
+                <div className="mt-8 pt-4 border-t border-slate-100 flex items-center gap-1.5 text-xs font-bold text-blue-600">
+                  <span>Step {item.step}</span>
+                  <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-1" />
+                </div>
               </div>
             );
           })}
