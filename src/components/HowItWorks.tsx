@@ -25,17 +25,17 @@ export function HowItWorks() {
   ];
 
   return (
-    <section id="how-it-works" className="py-20 md:py-28 bg-white">
+    <section id="how-it-works" className="py-20 md:py-28 bg-white dark:bg-slate-950 transition-colors duration-300">
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <h2 className="text-xs font-bold tracking-widest text-blue-600 uppercase mb-2">
+          <h2 className="text-xs font-bold tracking-widest text-blue-600 dark:text-blue-400 uppercase mb-2">
             Simple 3-Step Process
           </h2>
-          <p className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight mb-4">
+          <p className="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-4">
             How GharSathi Works
           </p>
-          <p className="text-base sm:text-lg text-gray-600 font-normal">
+          <p className="text-base sm:text-lg text-gray-600 dark:text-slate-400 font-normal">
             No endless scrolling, no fake listings, and no calling dozens of unverified contacts.
           </p>
         </div>
@@ -47,22 +47,22 @@ export function HowItWorks() {
             return (
               <div
                 key={index}
-                className="relative bg-white border border-gray-200/90 rounded-2xl p-8 transition-all duration-200 hover:border-blue-600/40 hover:shadow-card group"
+                className="relative bg-white dark:bg-slate-900 border border-gray-200/90 dark:border-slate-800 rounded-2xl p-8 transition-all duration-200 hover:border-blue-600/40 dark:hover:border-blue-500/40 hover:shadow-card group"
               >
                 {/* Step Number Tag */}
                 <div className="flex items-center justify-between mb-6">
-                  <div className="w-12 h-12 rounded-xl bg-slate-50 border border-gray-200 text-gray-900 flex items-center justify-center group-hover:bg-blue-50 group-hover:border-blue-200 group-hover:text-blue-600 transition-colors">
+                  <div className="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-white flex items-center justify-center group-hover:bg-blue-50 dark:group-hover:bg-blue-950 group-hover:border-blue-200 dark:group-hover:border-blue-800 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     <Icon className="w-6 h-6 stroke-[1.8]" />
                   </div>
-                  <span className="text-3xl font-black text-slate-200 group-hover:text-blue-200 transition-colors font-mono">
+                  <span className="text-3xl font-black text-slate-200 dark:text-slate-800 group-hover:text-blue-200 dark:group-hover:text-blue-900 transition-colors font-mono">
                     {item.step}
                   </span>
                 </div>
 
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
                   {item.title}
                 </h3>
-                <p className="text-sm text-gray-600 leading-relaxed font-normal">
+                <p className="text-sm text-gray-600 dark:text-slate-400 leading-relaxed font-normal">
                   {item.description}
                 </p>
               </div>
