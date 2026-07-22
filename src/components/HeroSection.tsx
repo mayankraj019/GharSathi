@@ -17,12 +17,40 @@ import {
   Award,
   TrendingUp,
 } from "lucide-react";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
+
+function AnimatedCounter({ end, duration = 1800, suffix = "" }: { end: number; duration?: number; suffix?: string }) {
+  const [count, setCount] = useState(0);
+  const { ref, isVisible } = useScrollReveal();
+
+  useEffect(() => {
+    if (!isVisible) return;
+    let startTimestamp: number | null = null;
+    const stepAnim = (timestamp: number) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      const current = Math.floor(progress * end);
+      setCount(current);
+      if (progress < 1) {
+        window.requestAnimationFrame(stepAnim);
+      }
+    };
+    window.requestAnimationFrame(stepAnim);
+  }, [isVisible, end, duration]);
+
+  return (
+    <span ref={ref}>
+      {count}{suffix}
+    </span>
+  );
+}
 
 export function HeroSection() {
   const [step, setStep] = useState<number>(0);
   const [progress, setProgress] = useState<number>(15);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
+  const { ref: heroRevealRef, isVisible: isHeroVisible } = useScrollReveal();
 
   const scrollToForm = () => {
     const formElement = document.getElementById("requirement-form");
@@ -83,14 +111,19 @@ export function HeroSection() {
       {/* Subtle Grid Architectural Pattern */}
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#0f172a_1px,transparent_1px)] [background-size:24px_24px]" />
 
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div
+        ref={heroRevealRef}
+        className={`max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 transition-all duration-700 ${
+          isHeroVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+        }`}
+      >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-center">
           
           {/* LEFT SIDE: Headline, Copy, Trust Pills & CTAs */}
           <div className="lg:col-span-7 flex flex-col items-start text-left">
             
             {/* Top SaaS Pill Badge */}
-            <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-slate-100/90 border border-slate-200/80 text-xs font-semibold text-slate-800 mb-8 backdrop-blur-md shadow-xs">
+            <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-slate-100/90 border border-slate-200/80 text-xs font-semibold text-slate-800 mb-8 backdrop-blur-md shadow-xs transition-transform duration-200 hover:scale-[1.02]">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600" />
@@ -132,29 +165,32 @@ export function HeroSection() {
 
             {/* Trust Pills */}
             <div className="flex flex-wrap items-center gap-2.5 mb-10">
-              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-xs font-semibold text-emerald-800">
+              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-xs font-semibold text-emerald-800 transition-transform duration-200 hover:scale-105">
                 <Check className="w-3.5 h-3.5 text-emerald-600" />
                 <span>100% Free</span>
               </div>
-              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-100 border border-slate-200/80 text-xs font-semibold text-slate-700">
+              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-100 border border-slate-200/80 text-xs font-semibold text-slate-700 transition-transform duration-200 hover:scale-105">
                 <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
                 <span>Verified Brokers</span>
               </div>
-              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-100 border border-slate-200/80 text-xs font-semibold text-slate-700">
+              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-100 border border-slate-200/80 text-xs font-semibold text-slate-700 transition-transform duration-200 hover:scale-105">
                 <Clock className="w-3.5 h-3.5 text-blue-600" />
                 <span>Match within 30 Minutes</span>
               </div>
             </div>
 
-            {/* CTA Buttons */}
+            {/* CTA Buttons with Shimmer Overlay */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full sm:w-auto mb-12">
               <button
                 onClick={scrollToForm}
                 className="group relative inline-flex items-center justify-center gap-2.5 px-8 py-4 text-base font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 rounded-2xl transition-all duration-200 shadow-lg shadow-blue-600/25 hover:shadow-xl hover:shadow-blue-600/40 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer overflow-hidden"
               >
-                <Sparkles className="w-4 h-4 text-blue-200 animate-pulse" />
-                <span>Find My Home</span>
-                <ArrowRight className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-1" />
+                {/* Shimmer effect */}
+                <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full group-hover:animate-shimmer pointer-events-none" />
+                
+                <Sparkles className="w-4 h-4 text-blue-200 animate-pulse relative z-10" />
+                <span className="relative z-10">Find My Home</span>
+                <ArrowRight className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-1 relative z-10" />
               </button>
               <button
                 onClick={scrollToHowItWorks}
@@ -164,9 +200,9 @@ export function HeroSection() {
               </button>
             </div>
 
-            {/* Social Proof Metric Cards */}
+            {/* Social Proof Animated Metric Cards */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 pt-6 border-t border-slate-200/70 w-full max-w-2xl">
-              <div className="p-3 rounded-xl bg-slate-50/60 border border-slate-200/50 flex flex-col">
+              <div className="p-3 rounded-xl bg-slate-50/60 border border-slate-200/50 flex flex-col transition-transform duration-200 hover:-translate-y-0.5">
                 <div className="flex items-center gap-1 text-amber-400 mb-1">
                   <Star className="w-3.5 h-3.5 fill-amber-400" />
                   <Star className="w-3.5 h-3.5 fill-amber-400" />
@@ -179,30 +215,30 @@ export function HeroSection() {
                 </span>
               </div>
 
-              <div className="p-3 rounded-xl bg-slate-50/60 border border-slate-200/50 flex flex-col">
+              <div className="p-3 rounded-xl bg-slate-50/60 border border-slate-200/50 flex flex-col transition-transform duration-200 hover:-translate-y-0.5">
                 <div className="flex items-center gap-1 text-blue-600 mb-0.5 font-bold text-sm">
                   <Users className="w-3.5 h-3.5" />
-                  <span>42+</span>
+                  <AnimatedCounter end={42} suffix="+" />
                 </div>
                 <span className="text-[11px] font-medium text-slate-600">
                   Verified Brokers
                 </span>
               </div>
 
-              <div className="p-3 rounded-xl bg-slate-50/60 border border-slate-200/50 flex flex-col">
+              <div className="p-3 rounded-xl bg-slate-50/60 border border-slate-200/50 flex flex-col transition-transform duration-200 hover:-translate-y-0.5">
                 <div className="flex items-center gap-1 text-emerald-600 mb-0.5 font-bold text-sm">
                   <TrendingUp className="w-3.5 h-3.5" />
-                  <span>98%</span>
+                  <AnimatedCounter end={98} suffix="%" />
                 </div>
                 <span className="text-[11px] font-medium text-slate-600">
                   Match Success Rate
                 </span>
               </div>
 
-              <div className="p-3 rounded-xl bg-slate-50/60 border border-slate-200/50 flex flex-col">
+              <div className="p-3 rounded-xl bg-slate-50/60 border border-slate-200/50 flex flex-col transition-transform duration-200 hover:-translate-y-0.5">
                 <div className="flex items-center gap-1 text-indigo-600 mb-0.5 font-bold text-sm">
                   <Award className="w-3.5 h-3.5" />
-                  <span>18 Min</span>
+                  <AnimatedCounter end={18} suffix=" Min" />
                 </div>
                 <span className="text-[11px] font-medium text-slate-600">
                   Avg Response Time

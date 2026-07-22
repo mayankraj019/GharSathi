@@ -71,12 +71,42 @@
   }
 }
 
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes linePulse {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 .animate-float-slow {
   animation: float 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 .animate-pulse-glow {
   animation: pulseGlow 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+.animate-line-pulse {
+  background-size: 200% 200%;
+  animation: linePulse 4s ease infinite;
 }
 
 /* Glassmorphism helpers */

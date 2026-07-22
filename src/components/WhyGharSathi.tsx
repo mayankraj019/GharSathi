@@ -1,8 +1,11 @@
 "use client";
 
 import { CheckCircle2, ShieldCheck, Clock, Layers, Users, Sparkles } from "lucide-react";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 export function WhyGharSathi() {
+  const { ref: sectionRef, isVisible } = useScrollReveal();
+
   const features = [
     {
       title: "One Simple Form",
@@ -47,7 +50,12 @@ export function WhyGharSathi() {
       {/* Soft Glow */}
       <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-blue-500/[0.025] rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div
+        ref={sectionRef}
+        className={`max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 transition-all duration-700 ${
+          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+        }`}
+      >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           
           {/* Left Column: Heading & Messaging */}
@@ -67,7 +75,7 @@ export function WhyGharSathi() {
             </p>
 
             {/* Zero Commission Banner */}
-            <div className="p-6 bg-white border border-slate-200/90 rounded-2xl w-full shadow-card relative overflow-hidden group">
+            <div className="p-6 bg-white border border-slate-200/90 rounded-2xl w-full shadow-card relative overflow-hidden group transition-transform duration-200 hover:scale-[1.01]">
               <div className="absolute top-0 left-0 bottom-0 w-1 bg-emerald-500" />
               <div className="flex items-center gap-3 mb-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -86,7 +94,10 @@ export function WhyGharSathi() {
               return (
                 <div
                   key={index}
-                  className={`group relative rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-card ${
+                  style={{ transitionDelay: `${index * 80}ms` }}
+                  className={`group relative rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-saas ${
+                    isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+                  } ${
                     feature.featured
                       ? "bg-gradient-to-br from-blue-50/90 via-white to-indigo-50/50 border-2 border-blue-500/60 shadow-md"
                       : "bg-white border border-slate-200/90 hover:border-blue-500/40"

@@ -1,8 +1,11 @@
 "use client";
 
 import { ShieldCheck, Zap, UserCheck, CheckCircle2 } from "lucide-react";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 export function TrustSection() {
+  const { ref: sectionRef, isVisible } = useScrollReveal();
+
   const trustItems = [
     {
       icon: ShieldCheck,
@@ -39,7 +42,12 @@ export function TrustSection() {
       {/* Background Soft Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[300px] bg-blue-500/[0.025] rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div
+        ref={sectionRef}
+        className={`max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 transition-all duration-700 ${
+          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+        }`}
+      >
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="text-xs font-bold tracking-widest text-blue-600 uppercase mb-2 block">
@@ -57,7 +65,10 @@ export function TrustSection() {
             return (
               <div
                 key={index}
-                className="group relative bg-white border border-slate-200/80 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-card hover:border-blue-500/40 flex flex-col items-start overflow-hidden"
+                style={{ transitionDelay: `${index * 100}ms` }}
+                className={`group relative bg-white border border-slate-200/80 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-2 hover:shadow-saas hover:border-blue-500/40 flex flex-col items-start overflow-hidden ${
+                  isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+                }`}
               >
                 {/* Top Subtle Gradient Accents */}
                 <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${item.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />

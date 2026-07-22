@@ -1,8 +1,11 @@
 "use client";
 
 import { FileText, Users, Home, ArrowRight } from "lucide-react";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 export function HowItWorks() {
+  const { ref: sectionRef, isVisible } = useScrollReveal();
+
   const steps = [
     {
       step: "01",
@@ -29,7 +32,12 @@ export function HowItWorks() {
       {/* Background Soft Ambient Glow */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/[0.03] rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div
+        ref={sectionRef}
+        className={`max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 transition-all duration-700 ${
+          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+        }`}
+      >
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-20">
           <span className="text-xs font-bold tracking-widest text-blue-600 uppercase mb-2 block">
@@ -43,22 +51,25 @@ export function HowItWorks() {
           </p>
         </div>
 
-        {/* 3 Step Cards Grid with Connecting Flow Lines */}
+        {/* 3 Step Cards Grid with Animated Flow Line */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-          {/* Connecting Line Accent on Desktop */}
-          <div className="hidden md:block absolute top-1/2 left-[15%] right-[15%] h-0.5 bg-gradient-to-r from-blue-500/20 via-indigo-500/40 to-blue-500/20 -translate-y-8 z-0" />
+          {/* Animated Connecting Flow Line Accent on Desktop */}
+          <div className="hidden md:block absolute top-1/2 left-[15%] right-[15%] h-0.5 bg-gradient-to-r from-blue-500/20 via-blue-600 to-blue-500/20 animate-line-pulse -translate-y-8 z-0" />
 
           {steps.map((item, index) => {
             const Icon = item.icon;
             return (
               <div
                 key={index}
-                className="group relative z-10 bg-white border border-slate-200/90 rounded-2xl p-8 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-card hover:border-blue-500/40 flex flex-col justify-between"
+                style={{ transitionDelay: `${index * 120}ms` }}
+                className={`group relative z-10 bg-white border border-slate-200/90 rounded-2xl p-8 transition-all duration-300 hover:-translate-y-2 hover:shadow-saas hover:border-blue-500/40 flex flex-col justify-between ${
+                  isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+                }`}
               >
                 <div>
                   {/* Step Number Tag & Icon */}
                   <div className="flex items-center justify-between mb-8">
-                    <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-900 flex items-center justify-center group-hover:bg-blue-600 group-hover:border-blue-600 group-hover:text-white transition-all duration-300 shadow-xs">
+                    <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-900 flex items-center justify-center group-hover:bg-blue-600 group-hover:border-blue-600 group-hover:text-white transition-all duration-300 shadow-xs group-hover:scale-105">
                       <Icon className="w-7 h-7 stroke-[1.8]" />
                     </div>
                     <span className="text-4xl font-black text-slate-200 group-hover:text-blue-500/30 transition-colors font-mono tracking-tighter">
@@ -76,7 +87,7 @@ export function HowItWorks() {
 
                 <div className="mt-8 pt-4 border-t border-slate-100 flex items-center gap-1.5 text-xs font-bold text-blue-600">
                   <span>Step {item.step}</span>
-                  <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-1" />
+                  <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-1.5" />
                 </div>
               </div>
             );

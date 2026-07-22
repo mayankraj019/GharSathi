@@ -6,12 +6,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { rentalRequirementSchema, type RentalRequirementInput } from "@/lib/validations";
 import { SuccessView } from "./SuccessView";
 import { Send, Loader2, ShieldCheck, MapPin, Home, User, Sparkles, Lock, Zap } from "lucide-react";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 export function RequirementForm() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [submittedName, setSubmittedName] = useState<string>("");
+  const { ref: sectionRef, isVisible } = useScrollReveal();
 
   const {
     register,
@@ -66,7 +68,12 @@ export function RequirementForm() {
       {/* Background Soft Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-blue-500/[0.035] rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div
+        ref={sectionRef}
+        className={`max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 transition-all duration-700 ${
+          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+        }`}
+      >
         {/* Section Title */}
         <div className="text-center max-w-2xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-xs font-bold text-blue-700 uppercase tracking-wider mb-4 shadow-xs">
@@ -336,22 +343,25 @@ export function RequirementForm() {
                 </div>
               </div>
 
-              {/* Submit Button */}
+              {/* Submit Button with Shimmer Overlay */}
               <div className="pt-3">
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full flex items-center justify-center gap-2.5 px-8 py-4 text-base font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 rounded-2xl transition-all duration-200 shadow-lg shadow-blue-600/25 hover:shadow-xl hover:shadow-blue-600/40 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed group cursor-pointer"
+                  className="relative w-full flex items-center justify-center gap-2.5 px-8 py-4 text-base font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 rounded-2xl transition-all duration-200 shadow-lg shadow-blue-600/25 hover:shadow-xl hover:shadow-blue-600/40 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed group cursor-pointer overflow-hidden"
                 >
+                  {/* Shimmer effect */}
+                  <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full group-hover:animate-shimmer pointer-events-none" />
+
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="w-5 h-5 animate-spin text-white" />
-                      <span>Submitting Requirement...</span>
+                      <Loader2 className="w-5 h-5 animate-spin text-white relative z-10" />
+                      <span className="relative z-10">Submitting Requirement...</span>
                     </>
                   ) : (
                     <>
-                      <Send className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-1" />
-                      <span>Submit My Requirement</span>
+                      <Send className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-1 relative z-10" />
+                      <span className="relative z-10">Submit My Requirement</span>
                     </>
                   )}
                 </button>
