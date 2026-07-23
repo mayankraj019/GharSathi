@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import { Resend } from "resend";
+import { escapeHtml } from "./security";
 
 interface EmailPayload {
   name: string;
@@ -28,6 +29,18 @@ export async function sendEnquiryEmail(data: EmailPayload) {
     } catch {
       formattedDate = new Date().toLocaleString();
     }
+
+    // Escape all user inputs for HTML security
+    const safeName = escapeHtml(data.name);
+    const safePhone = escapeHtml(data.phone);
+    const safeEmail = escapeHtml(data.email);
+    const safeCity = escapeHtml(data.city);
+    const safeArea = escapeHtml(data.preferredArea);
+    const safeBudget = escapeHtml(data.budget);
+    const safeFlatType = escapeHtml(data.flatType);
+    const safeTenantType = escapeHtml(data.tenantType);
+    const safeMoveInDate = escapeHtml(data.moveInDate);
+    const safeNotes = data.additionalRequirements ? escapeHtml(data.additionalRequirements) : "";
 
     const subject = "🏠 New Rental Enquiry | GharSathi";
 
@@ -68,15 +81,15 @@ export async function sendEnquiryEmail(data: EmailPayload) {
                 <table width="100%" cellspacing="0" cellpadding="4">
                   <tr>
                     <td width="35%" style="font-size: 13px; color: #6b7280; font-weight: 500;">Name:</td>
-                    <td width="65%" style="font-size: 14px; color: #111827; font-weight: 600;">${data.name}</td>
+                    <td width="65%" style="font-size: 14px; color: #111827; font-weight: 600;">${safeName}</td>
                   </tr>
                   <tr>
                     <td style="font-size: 13px; color: #6b7280; font-weight: 500;">Phone:</td>
-                    <td style="font-size: 14px; color: #111827; font-weight: 600;"><a href="tel:${data.phone}" style="color: #2563eb; text-decoration: none;">${data.phone}</a></td>
+                    <td style="font-size: 14px; color: #111827; font-weight: 600;"><a href="tel:${safePhone}" style="color: #2563eb; text-decoration: none;">${safePhone}</a></td>
                   </tr>
                   <tr>
                     <td style="font-size: 13px; color: #6b7280; font-weight: 500;">Email:</td>
-                    <td style="font-size: 14px; color: #111827; font-weight: 600;"><a href="mailto:${data.email}" style="color: #2563eb; text-decoration: none;">${data.email}</a></td>
+                    <td style="font-size: 14px; color: #111827; font-weight: 600;"><a href="mailto:${safeEmail}" style="color: #2563eb; text-decoration: none;">${safeEmail}</a></td>
                   </tr>
                 </table>
               </div>
@@ -91,34 +104,34 @@ export async function sendEnquiryEmail(data: EmailPayload) {
                 <table width="100%" cellspacing="0" cellpadding="4">
                   <tr>
                     <td width="35%" style="font-size: 13px; color: #6b7280; font-weight: 500;">City:</td>
-                    <td width="65%" style="font-size: 14px; color: #111827; font-weight: 600;">${data.city}</td>
+                    <td width="65%" style="font-size: 14px; color: #111827; font-weight: 600;">${safeCity}</td>
                   </tr>
                   <tr>
                     <td style="font-size: 13px; color: #6b7280; font-weight: 500;">Preferred Area:</td>
-                    <td style="font-size: 14px; color: #111827; font-weight: 600;">${data.preferredArea}</td>
+                    <td style="font-size: 14px; color: #111827; font-weight: 600;">${safeArea}</td>
                   </tr>
                   <tr>
                     <td style="font-size: 13px; color: #6b7280; font-weight: 500;">Budget:</td>
-                    <td style="font-size: 14px; color: #111827; font-weight: 600;">₹${data.budget} / month</td>
+                    <td style="font-size: 14px; color: #111827; font-weight: 600;">₹${safeBudget} / month</td>
                   </tr>
                   <tr>
                     <td style="font-size: 13px; color: #6b7280; font-weight: 500;">Flat Type:</td>
-                    <td style="font-size: 14px; color: #111827; font-weight: 600;">${data.flatType}</td>
+                    <td style="font-size: 14px; color: #111827; font-weight: 600;">${safeFlatType}</td>
                   </tr>
                   <tr>
                     <td style="font-size: 13px; color: #6b7280; font-weight: 500;">Tenant Type:</td>
-                    <td style="font-size: 14px; color: #111827; font-weight: 600;">${data.tenantType}</td>
+                    <td style="font-size: 14px; color: #111827; font-weight: 600;">${safeTenantType}</td>
                   </tr>
                   <tr>
                     <td style="font-size: 13px; color: #6b7280; font-weight: 500;">Move-in Date:</td>
-                    <td style="font-size: 14px; color: #111827; font-weight: 600;">${data.moveInDate}</td>
+                    <td style="font-size: 14px; color: #111827; font-weight: 600;">${safeMoveInDate}</td>
                   </tr>
                   ${
-                    data.additionalRequirements
+                    safeNotes
                       ? `
                   <tr>
                     <td style="font-size: 13px; color: #6b7280; font-weight: 500; vertical-align: top;">Notes:</td>
-                    <td style="font-size: 14px; color: #374151;">${data.additionalRequirements}</td>
+                    <td style="font-size: 14px; color: #374151;">${safeNotes}</td>
                   </tr>
                   `
                       : ""

@@ -2,17 +2,56 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { rentalRequirementSchema } from "@/lib/validations";
 import { sendEnquiryEmail } from "@/lib/email";
+import { getClientIp, isSameOrigin } from "@/lib/security";
+import { checkRateLimit } from "@/lib/rateLimit";
 
 export async function POST(req: Request) {
   try {
+    // 1. Anti-CSRF / Origin Check
+    if (!isSameOrigin(req)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Untrusted origin or cross-site request forbidden.",
+        },
+        { status: 403 }
+      );
+    }
+
+    // 2. IP Rate Limiting Guard (5 requests per 10 minutes)
+    const clientIp = getClientIp(req);
+    const rateLimit = checkRateLimit(clientIp, {
+      windowMs: 10 * 60 * 1000,
+      max: 5,
+    });
+
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: `Too many submissions from this IP. Please try again in ${Math.ceil(
+            rateLimit.resetSeconds / 60
+          )} minutes.`,
+        },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(rateLimit.resetSeconds),
+            "X-RateLimit-Limit": String(rateLimit.limit),
+            "X-RateLimit-Remaining": String(rateLimit.remaining),
+          },
+        }
+      );
+    }
+
     const body = await req.json();
-    
-    // Server-side Zod validation
+
+    // 3. Server-side Zod validation with upper bounds & trimming
     const validationResult = rentalRequirementSchema.safeParse(body);
 
     if (!validationResult.success) {
       const formattedErrors = validationResult.error.flatten().fieldErrors;
-      console.warn("Validation failed for request:", formattedErrors);
+      console.warn("Validation failed for request from IP:", clientIp, formattedErrors);
       return NextResponse.json(
         {
           success: false,
@@ -25,7 +64,7 @@ export async function POST(req: Request) {
 
     const data = validationResult.data;
 
-    // Save to Prisma database
+    // 4. Save to Prisma database
     const record = await prisma.rentalRequests.create({
       data: {
         name: data.name,
@@ -41,8 +80,7 @@ export async function POST(req: Request) {
       },
     });
 
-    // Await email BEFORE returning response — critical for Vercel serverless
-    // (serverless functions terminate immediately after response, killing background tasks)
+    // 5. Await email dispatch with sanitized inputs
     try {
       await sendEnquiryEmail({
         name: data.name,
@@ -58,7 +96,6 @@ export async function POST(req: Request) {
         createdAt: record.createdAt || new Date(),
       });
     } catch (emailErr) {
-      // Log error but don't fail the request — data is already saved
       console.error("Email send error (non-fatal):", emailErr);
     }
 
@@ -68,14 +105,21 @@ export async function POST(req: Request) {
         message: "Your rental requirement has been submitted successfully.",
         id: record.id,
       },
-      { status: 201 }
+      {
+        status: 201,
+        headers: {
+          "X-RateLimit-Limit": String(rateLimit.limit),
+          "X-RateLimit-Remaining": String(rateLimit.remaining),
+        },
+      }
     );
   } catch (error: any) {
-    console.error("Error creating rental request:", error);
+    // Internal server logging (full error context hidden from external client)
+    console.error("Error processing rental request:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error?.message || "Internal server error. Please try again later.",
+        error: "An error occurred while processing your request. Please try again later.",
       },
       { status: 500 }
     );
