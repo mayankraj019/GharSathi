@@ -81,6 +81,11 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Explicitly set turbopack root to project root directory for Vercel builds
+  turbopack: {
+    root: __dirname,
+  },
+
   // Remove X-Powered-By header revealing implementation details
   poweredByHeader: false,
 
