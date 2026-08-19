@@ -9,7 +9,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "GharSathi | Your Trusted Partner in Finding the Perfect Home",
+  title: "GharSathi",
   description:
     "Stop searching hundreds of rental listings. Fill out one simple requirement form on GharSathi and get matched directly with trusted local property experts.",
   keywords: [
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   creator: "GharSathi",
   metadataBase: new URL("https://gharsathi.com"),
   openGraph: {
-    title: "GharSathi | Stop Searching. Start Living.",
+    title: "GharSathi",
     description:
       "Tell us your rental requirements once. Our trusted property experts will find the right home based on your needs.",
     url: "https://gharsathi.com",
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "GharSathi | Smart Rental Requirement Platform",
+    title: "GharSathi",
     description:
       "Fill one simple form and let verified property brokers bring tailored rental options to you.",
   },
